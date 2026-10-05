@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Página Magmattz — Catálogo Artístico
 
-## Getting Started
+Sitio web de catálogo para artista, Fase 1. Próximamente tienda de stickers, llaveros y prints. Solo venta en Bolivia.
 
-First, run the development server:
+## Stack
+
+- **Next.js 15** (App Router) + TypeScript + Tailwind CSS
+- **Sanity** como CMS headless (Studio en `/studio`)
+- **Cloudinary** para imágenes optimizadas
+- **Vercel** para deploy
+
+## Setup rápido
+
+### 1. Variables de entorno
+
+Copiar `.env.example` a `.env.local` y completar:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Descripción |
+|---|---|
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | ID del proyecto en [sanity.io/manage](https://sanity.io/manage) |
+| `NEXT_PUBLIC_SANITY_DATASET` | Nombre del dataset (normalmente `production`) |
+| `SANITY_API_TOKEN` | Token con permisos de editor desde sanity.io/manage |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | Cloud name de tu cuenta Cloudinary |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número con código de país, sin `+` (ej: `59170000000`) |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Sanity Studio
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Crear proyecto en [sanity.io/manage](https://sanity.io/manage)
+2. Completar `NEXT_PUBLIC_SANITY_PROJECT_ID` y `NEXT_PUBLIC_SANITY_DATASET` en `.env.local`
+3. En sanity.io/manage → API → CORS Origins, agregar `http://localhost:3000`
+4. Acceder al Studio en `http://localhost:3000/studio`
+5. Crear contenido de ejemplo desde el Studio
 
-## Learn More
+### 3. Cloudinary
 
-To learn more about Next.js, take a look at the following resources:
+1. Crear cuenta en [cloudinary.com](https://cloudinary.com)
+2. Copiar el **Cloud Name** desde el Dashboard
+3. Subir imágenes y copiar el **public_id** (ej: `Magmattz/obra-1`)
+4. En los campos de imagen del Studio, pegar el public_id
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Desarrollo local
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm install
+npm run dev
+```
 
-## Deploy on Vercel
+Abrir [http://localhost:3000](http://localhost:3000)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 5. Deploy en Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push al repositorio GitHub
+2. Importar proyecto en [vercel.com](https://vercel.com)
+3. Agregar las variables de entorno en Vercel → Settings → Environment Variables
+4. En sanity.io/manage → API → CORS Origins, agregar la URL de producción de Vercel
+5. Deploy automático en cada push a `main`
+
+## Estructura
+
+```
+app/
+  (site)/          # Páginas públicas
+  studio/          # Sanity Studio embebido
+components/
+  layout/          # Header, Footer, WhatsApp flotante
+  home/            # Secciones del inicio
+  catalog/         # Grilla, filtros, variantes
+  obra/            # Portafolio
+  ui/              # Componentes base
+lib/               # Sanity client, queries, helpers
+sanity/schemas/    # Modelos de datos
+```
+
+## Fase 2 (próxima)
+
+- Carrito de compras
+- Integración de pagos (Bolivia)
+- Panel de órdenes
